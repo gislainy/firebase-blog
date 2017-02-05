@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Blog</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.teal-red.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+		.mdl-layout {
+			align-items: center;
+			justify-content: center;
+		}
+		.mdl-layout__content {
+			padding: 24px;
+			flex: none;
+		}
+		.botaoAcessar button {
+      width: 100%;
+    }
+		.botoesRedesSociais {
+        padding: 0;
+    }
+    .btnFacebook {
+        background-color: #3b5998;
+        color: #fff;
+    }
+    .btnFacebook:hover {
+        background-color: #5378c5;
+    }
+    .btnGoogle {
+        background-color: #dd4b39;
+        color: #fff;
+    }
+    .btnGoogle:hover {
+        background-color: #dc6c5e;
+    }
+	</style>
+</head>
+
+<body>
+	<div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+		<main class="mdl-layout__content">
+			<div class="mdl-card mdl-shadow--6dp">
+				<div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+					<h2 class="mdl-card__title-text">WebGi</h2>
+				</div>
+				<div class="mdl-card__supporting-text">
+					<form action="#">
+						<div class="mdl-textfield mdl-js-textfield">
+							<input class="mdl-textfield__input" type="email" id="emailLogin" />
+							<label class="mdl-textfield__label" for="username">E-mail</label>
+						</div>
+						<div class="mdl-textfield mdl-js-textfield">
+							<input class="mdl-textfield__input" type="password" id="senhaLogin" />
+							<label class="mdl-textfield__label" for="userpass">Senha</label>
+						</div>
+					</form>
+				</div>
+				<div class="mdl-card__actions mdl-card--border">
+					<div class="botaoAcessar mdl-cell mdl-cell--12-col">
+						<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="window.webgi.usuario.login(qsv('#emailLogin'), qsv('#senhaLogin'))">
+							Login
+						</button>
+					</div>
+					<div class="botaoAcessar mdl-cell mdl-cell--12-col">
+						<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" 
+						onclick="window.webgi.usuario.register(window.qsv('#emailLogin'), window.qsv('#senhaLogin'))">
+							Registrar
+						</button>
+					</div>
+				</div>
+				<div class="mdl-cell mdl-cell--12-col">
+					<div class="mdl-grid botoesRedesSociais">
+						<div class="botaoAcessar mdl-cell mdl-cell--6-col">
+							<button class="btnFacebook mdl-button mdl-js-button mdl-button--raised" 
+							onclick="window.webgi.usuario.loginFacebook().then( function() { location.href = '/';})">
+							<i class="fa fa-facebook-official" aria-hidden="true"></i> Facebook</button>
+						</div>
+						<div class="botaoAcessar mdl-cell mdl-cell--6-col">
+							<button class="btnGoogle mdl-button mdl-js-button mdl-button--raised" 
+							onclick="window.webgi.usuario.loginGoogle().then( function() { location.href = '/';})">
+							<i class="fa fa-google-plus" aria-hidden="true"></i> Google</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			</main>
+		</div>
+</body>
+<script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+<script src="webgi.js"></script>
+
+</html>

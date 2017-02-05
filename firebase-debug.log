@@ -1,0 +1,28 @@
+[debug] ----------------------------------------------------------------------
+[debug] Command:      /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.2
+[debug] Platform:     linux
+[debug] Node Version: v6.9.4
+[debug] Time:         Sat Feb 04 2017 17:35:12 GMT-0200 (BRST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /home/gislainy/firebase-blog
+[info] Public Directory: public
+[info] 
+[info] Server listening at: http://localhost:5000
+[debug] ----------------------------------------------------------------------
+[debug] Command:      /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.2
+[debug] Platform:     linux
+[debug] Node Version: v6.9.4
+[debug] Time:         Sat Feb 04 2017 18:31:50 GMT-0200 (BRST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /home/gislainy/firebase-blog
+[info] Public Directory: public
+[info] 
+[info] Server listening at: http://localhost:5000
