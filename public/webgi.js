@@ -4,7 +4,6 @@ window.qsv = function (s) {
 window.qsa = function (s) {
 	return document.querySelectorAll(s);
 }
-
 window.webgi = {
 	internal: {},
 	boot: function () {
@@ -24,8 +23,7 @@ window.webgi = {
 						unsubscribe();
 					}
 				});
-				window.webgi.database = firebase.database();
-
+				firebase.auth().signInAnonymously();
 				setTimeout(function () {
 					resolve();
 					unsubscribe();
@@ -81,7 +79,6 @@ window.webgi = {
 				let promise = new Promise(function (resolve, reject) {
 					firebase.auth().signInWithEmailAndPassword(email, password)
 						.then(function () {
-							debugger;
 							location.href = '/';
 						})
 						.catch(function (error) {
@@ -136,22 +133,13 @@ window.webgi = {
 		}
 	},
 	post: {
-		salvar() {
-			var title = window.qsv('#titulo');
-			var post = $('#editor').summernote('code');
-			if (title && post) {
-				var newPost = {
-					title: titulo,
-					content: post,
-					publish: false
-				};
-				return window.webgi.post.createPost(newPost)
-					.then(function () {
-						location.href = '/';
-					}).catch(function (err) {
-						console.dir(err);
-					});
-			}
+		save(newPost) {
+			return window.webgi.post.createPost(newPost)
+				.then(function () {
+					location.href = '/';
+				}).catch(function (err) {
+					console.dir(err);
+				});
 		},
 		createPost(newPost) {
 			return webgi.boot().then(function () {
@@ -176,80 +164,97 @@ window.webgi = {
 			});
 		},
 		updatePost(post, post_id) {
-			let postFirebase = firebase.database().ref('/posts/');
-			post.created_at = new Date().getTime();
+			return webgi.boot().then(function () {
+				let postFirebase = firebase.database().ref('/posts/' + post_id);
+				post.created_at = new Date().getTime();
 
-			let promise = new Promise((resolve, reject) => {
-				try {
-					postFirebase.update(post, function () {
-						post.id = post_id;
-						resolve(post);
-					});
-				}
-				catch (e) {
-					reject(e.message);
-				}
-			})
-			return promise;
+				let promise = new Promise((resolve, reject) => {
+					try {
+						postFirebase.update(post, function () {
+							post.id = post_id;
+							resolve(post);
+						});
+					}
+					catch (e) {
+						reject(e.message);
+					}
+				});
+				return promise;
+			});
 		},
+		postsList: [],
 		getPostsList() {
-			let postFirebase = firebase.database().ref('/posts/');
-			let promise = new Promise((resolve, reject) => {
-				try {
-					postsFirebase.on('value', function (snapshot) {
-						let posts = window.webgi.mergeArrayObjectWithKey(snapshot.val());
-						let loopGetUser = (postIndex) => {
-							if (postIndex == posts.length) {
-								resolve(posts.reverse())
-							} else {
-								window.webgi.getProfile(posts[postIndex].uid).then((profile) => {
-									posts[postIndex].user = profile;
-									loopGetUser(postIndex + 1)
-								});
+			return webgi.boot().then(function () {
+				let postFirebase = firebase.database().ref('/posts/');
+				let promise = new Promise((resolve, reject) => {
+					try {
+						postFirebase.on('value', function (snapshot) {
+							var result = snapshot.val();
+							let posts = window.webgi.mergeArrayObjectWithKey(snapshot.val());
+							let loopGetUser = function (postIndex) {
+								if (postIndex == posts.length) {
+									resolve(posts.reverse())
+								} else {
+									// posts.forEach(function (post) {
+									// 	post.content = post.content.replace(/<(?:.|\n)*?>/gm, '');
+									// })
+									window.webgi.post.postsList = posts;
+									// window.webgi.posts.getProfile(posts[postIndex].uid).then((profile) => {
+									// 	posts[postIndex].user = profile;
+									// 	loopGetUser(postIndex + 1)
+									// });
+								}
 							}
-						}
-						loopGetUser(0);
-					});
-				}
-				catch (err) {
-					reject(err.message);
-				}
-			});
-			return promise;
-		},
-		getPost(id) {
-			let postFirebase = firebase.child('posts').child(id);
-			let promise = new Promise((resolve, reject) => {
-				try {
-					postFirebase.on('value', function (snapshot) {
-						let post = snapshot.val();
-						if (post) {
-							window.webgi.getProfile(post.uid).then((profile) => {
-								post.user = profile;
-								resolve(window.webgi.mergeObjectWithKey(post, id));
-							});
-						}
-						else {
-							reject('Post\'s not exists');
-						}
-					});
-				}
-				catch (e) {
-					reject(e.message);
-				}
-			});
-			return promise;
-		},
-		deletePost(id) {
-			let postFirebase = firebase.child('posts').child(id);
-			return new Promise((resolve, reject) => {
-				postFirebase.remove((err) => {
-					if (err) {
+							loopGetUser(0);
+						});
+					}
+					catch (err) {
 						reject(err.message);
 					}
-					else resolve('Post was deleted');
 				});
-			})
+				return promise;
+			});
+		},
+		postItem: {},
+		getPost(id) {
+			return webgi.boot().then(function () {
+				let postFirebase = firebase.database().ref('/posts/' + id);
+				let promise = new Promise((resolve, reject) => {
+					try {
+						postFirebase.on('value', function (snapshot) {
+							let post = snapshot.val();
+							if (post) {
+								window.webgi.post.postItem = window.webgi.mergeObjectWithKey(post, id);
+							}
+							else {
+								reject('Post\'s not exists');
+							}
+						});
+					}
+					catch (e) {
+						reject(e.message);
+					}
+				});
+				return promise;
+			});
+		},
+		deletePost(id) {
+			return webgi.boot().then(function () {
+				let postFirebase = firebase.database().ref('/posts/' + id);
+				return new Promise((resolve, reject) => {
+					postFirebase.remove((err) => {
+						if (err) {
+							reject(err.message);
+						}
+						else {
+							resolve('Post was deleted');
+							window.webgi.post.postsList = window.webgi.post.postsList.filter((post) => {
+								post.id = !id
+							});
+						}
+					});
+				});
+			});
 		}
 	},
 	mergeArrayObjectWithKey(objects) {
